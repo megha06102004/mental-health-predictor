@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindPulse AI | DASS-21 Mental Health Screening Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="hero-header">
+      <div class="brand">
+        <span class="brand-icon">🧠</span>
+        <div>
+          <h1>MindPulse AI</h1>
+          <p class="subtitle">Clinical DASS-21 Psychometric & Deep Learning Screening Platform</p>
+        </div>
+      </div>
+      <div class="tech-badge">
+        <span>Powered by Scikit-learn, TensorFlow/Keras, Pandas & Matplotlib</span>
+      </div>
+    </header>
+
+    <!-- Instructions Card -->
+    <div class="info-card">
+      <h3>📋 Clinical Instructions</h3>
+      <p>
+        Please read each statement and select how much it applied to you <strong>over the past week</strong>.
+        There are no right or wrong answers. Rate each item from <strong>0 (Did not apply at all)</strong> to <strong>3 (Applied very much or most of the time)</strong>.
+      </p>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <span class="progress-label" id="progressText">0 of 21 Answered</span>
+    </div>
+
+    <!-- Questionnaire Container -->
+    <main id="quizContainer">
+      <div id="questionsList"></div>
+
+      <div class="action-bar">
+        <button id="submitBtn" class="btn btn-primary" disabled>
+          Analyze Psychological Profile ⚡
+        </button>
+      </div>
+    </main>
+
+    <!-- Results Section -->
+    <section id="resultsSection" class="results-card hidden">
+      <div class="results-header">
+        <h2>📊 Diagnostic Assessment Profile</h2>
+        <button id="resetBtn" class="btn btn-secondary">Retake Test 🔄</button>
+      </div>
+
+      <!-- Severity Badges Grid -->
+      <div class="metrics-grid">
+        <div class="metric-box" id="boxDepression">
+          <span class="metric-title">Depression</span>
+          <div class="metric-score" id="scoreDepression">0</div>
+          <div class="badge" id="badgeDepression">Normal</div>
+          <div class="dl-tag" id="dlDepression">Keras DL: Normal (98%)</div>
+          <p class="metric-desc">Dysphoria, hopelessness, and loss of interest</p>
+        </div>
+
+        <div class="metric-box" id="boxAnxiety">
+          <span class="metric-title">Anxiety</span>
+          <div class="metric-score" id="scoreAnxiety">0</div>
+          <div class="badge" id="badgeAnxiety">Normal</div>
+          <div class="dl-tag" id="dlAnxiety">Keras DL: Normal (95%)</div>
+          <p class="metric-desc">Autonomic arousal, tremors, and situational dread</p>
+        </div>
+
+        <div class="metric-box" id="boxStress">
+          <span class="metric-title">Stress</span>
+          <div class="metric-score" id="scoreStress">0</div>
+          <div class="badge" id="badgeStress">Normal</div>
+          <div class="dl-tag" id="dlStress">Keras DL: Normal (96%)</div>
+          <p class="metric-desc">Chronic nervous arousal, tension, and irritability</p>
+        </div>
+      </div>
+
+      <!-- Chart and Explainable AI Section -->
+      <div class="details-grid">
+        <div class="chart-container">
+          <h3>Psychological Triad Profile (Matplotlib)</h3>
+          <img id="radarChart" src="" alt="Matplotlib Radar Chart" class="radar-img">
+        </div>
+
+        <div class="insights-container">
+          <h3>🔍 Key Contributing Symptoms (Explainable AI)</h3>
+          <ul id="symptomsList" class="insights-list"></ul>
+
+          <h3>💡 Evidence-Based Recommendations</h3>
+          <ul id="recommendationsList" class="recommendations-list"></ul>
+        </div>
+      </div>
+
+      <div class="disclaimer-banner">
+        ⚠️ <strong>Clinical Disclaimer:</strong> MindPulse DASS-21 is an automated screening and research instrument. It does not replace a diagnostic consultation with a licensed clinical psychiatrist or psychologist.
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>Developed by <strong>Megha Bhandari</strong> | B.Tech IT | Built with Scikit-learn & TensorFlow/Keras</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
