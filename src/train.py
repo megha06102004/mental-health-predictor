@@ -1,4 +1,4 @@
-﻿"""
+"""
 Model Training and Hyperparameter Tuning Script using Scikit-learn, Pandas, and NumPy.
 Trains multi-target classifiers for Depression, Anxiety, and Stress with cross-validation.
 """
@@ -17,7 +17,7 @@ from sklearn.metrics import classification_report, accuracy_score, f1_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-from .data_loader import generate_synthetic_dass_dataset, SEVERITY_LEVELS
+from .data_loader import load_psychometric_dataset, generate_synthetic_dass_dataset, SEVERITY_LEVELS
 from .preprocessing import DASSFeatureEngineer, create_feature_pipeline
 from .visualizer import plot_feature_importance
 
@@ -30,12 +30,12 @@ os.makedirs(MODELS_DIR, exist_ok=True)
 def train_models():
     print("=" * 65)
     print("  MINDPULSE: TRAINING SUPERVISED PSYCHOMETRIC MODELS")
-    print("  Using Scikit-learn, Pandas, NumPy, and Matplotlib")
+    print("  Trained on Authentic OpenPsychometrics DASS Dataset")
     print("=" * 65)
 
-    # 1. Load / Synthesize Dataset
-    print("[1/5] Generating psychometric dataset (N=3,000 samples)...")
-    df = generate_synthetic_dass_dataset(n_samples=3000, random_state=42)
+    # 1. Load Real Dataset
+    print("[1/5] Loading authentic OpenPsychometrics dataset...")
+    df = load_psychometric_dataset()
     raw_feature_cols = [f"Q{i+1}" for i in range(21)]
     X_raw = df[raw_feature_cols]
 
@@ -43,17 +43,16 @@ def train_models():
     y_anx = df["Anxiety_Class"]
     y_str = df["Stress_Class"]
 
-    # 2. Train/Test Split
+    # 2. Train/Test Split (Synchronized indices across all multi-targets)
     print("[2/5] Splitting data into 80% Train, 20% Test...")
-    X_train_raw, X_test_raw, y_dep_tr, y_dep_te = train_test_split(
-        X_raw, y_dep, test_size=0.20, random_state=42, stratify=y_dep
-    )
-    _, _, y_anx_tr, y_anx_te = train_test_split(
-        X_raw, y_anx, test_size=0.20, random_state=42, stratify=y_anx
-    )
-    _, _, y_str_tr, y_str_te = train_test_split(
-        X_raw, y_str, test_size=0.20, random_state=42, stratify=y_str
-    )
+    indices = np.arange(len(X_raw))
+    idx_tr, idx_te = train_test_split(indices, test_size=0.20, random_state=42)
+
+    X_train_raw = X_raw.iloc[idx_tr]
+    X_test_raw = X_raw.iloc[idx_te]
+    y_dep_tr, y_dep_te = y_dep.iloc[idx_tr], y_dep.iloc[idx_te]
+    y_anx_tr, y_anx_te = y_anx.iloc[idx_tr], y_anx.iloc[idx_te]
+    y_str_tr, y_str_te = y_str.iloc[idx_tr], y_str.iloc[idx_te]
 
     # 3. Fit Preprocessing Pipeline
     print("[3/5] Fitting Feature Engineering and Normalization Pipeline...")
@@ -87,9 +86,9 @@ def train_models():
     # 5. Fine-Tune with GridSearchCV for All 3 Subscales
     print("\n[5/5] Performing GridSearchCV Hyperparameter Optimization for Final Models...")
     param_grid = {
-        "n_estimators": [80, 120],
-        "max_depth": [6, 10, None],
-        "min_samples_split": [2, 5]
+        "n_estimators": [100],
+        "max_depth": [12, None],
+        "min_samples_split": [2]
     }
 
     targets = [

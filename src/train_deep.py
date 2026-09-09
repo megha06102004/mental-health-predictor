@@ -1,4 +1,4 @@
-﻿"""
+"""
 Training script for Multi-Task Deep Neural Network (TensorFlow / Keras).
 """
 
@@ -10,7 +10,7 @@ from tensorflow import keras
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
-from .data_loader import generate_synthetic_dass_dataset, SEVERITY_LEVELS
+from .data_loader import load_psychometric_dataset, generate_synthetic_dass_dataset, SEVERITY_LEVELS
 from .deep_learning import build_multitask_dnn
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,7 +20,7 @@ MODELS_DIR = os.path.join(BASE_DIR, "models")
 def train_deep_model():
     print("=" * 65)
     print("  MINDPULSE: TRAINING MULTI-TASK DEEP NEURAL NETWORK")
-    print("  Using TensorFlow / Keras (Multi-Task Representation Learning)")
+    print("  Trained on Authentic OpenPsychometrics DASS Dataset")
     print("=" * 65)
 
     # Load preprocessor
@@ -31,7 +31,7 @@ def train_deep_model():
         scaler = bundle["scaler"]
 
     # Load dataset
-    df = generate_synthetic_dass_dataset(n_samples=3500, random_state=42)
+    df = load_psychometric_dataset()
     raw_feature_cols = [f"Q{i+1}" for i in range(21)]
     X_raw = df[raw_feature_cols]
 

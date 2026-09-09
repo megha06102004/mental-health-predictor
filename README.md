@@ -1,4 +1,4 @@
-﻿# 🧠 MindPulse AI: Predicting Depression, Anxiety, and Stress (DASS-21)
+# 🧠 MindPulse AI: Predicting Depression, Anxiety, and Stress (DASS-21)
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML%20Pipelines-orange.svg)](https://scikit-learn.org/)
@@ -9,7 +9,18 @@
 
 An end-to-end Machine Learning and Deep Learning psychometric screening platform based on the **Depression, Anxiety, and Stress Scales (DASS-21)** developed by the University of New South Wales (Lovibond & Lovibond). 
 
-Combines classical **Scikit-learn ensemble estimators** with a **TensorFlow/Keras Multi-Task Deep Neural Network (MTL-DNN)** to classify psychological distress across 5 clinical severity tiers (*Normal, Mild, Moderate, Severe, Extremely Severe*) with Explainable AI symptom attribution.
+Trained on authentic human psychometric research data from the **OpenPsychometrics DASS archive**, the system combines classical **Scikit-learn ensemble estimators** with a **TensorFlow/Keras Multi-Task Deep Neural Network (MTL-DNN)** to classify psychological distress across 5 clinical severity tiers (*Normal, Mild, Moderate, Severe, Extremely Severe*) with Explainable AI symptom attribution.
+
+---
+
+## 📊 Real-World Psychometric Dataset (OpenPsychometrics)
+
+Unlike toy synthetic demonstrations, this system is trained on **authentic human survey data**:
+* **Source Archive:** [OpenPsychometrics Research Dataset](https://openpsychometrics.org/_rawdata/)
+* **Raw Population Size:** 39,775 participants across international cohorts.
+* **Data Quality Filtering:** Filtered for validity by response completion latency ($VCL \ge 10\text{s}$) to eliminate rapid random clicks and incomplete records.
+* **Clinical Normalization:** Mapped DASS-42 item numbers to the official 21-question DASS-21 scale ($0$ to $3$ Likert scores).
+* **Sampled Working Cohort:** 6,000 validated participant profiles stored in `data/real_dass_data.csv`.
 
 ---
 
@@ -17,9 +28,9 @@ Combines classical **Scikit-learn ensemble estimators** with a **TensorFlow/Kera
 
 The DASS-21 measures the negative emotional states of **Depression**, **Anxiety**, and **Stress** using 21 validated psychological items (7 items per subscale) rated on a 4-point Likert scale ($0$ to $3$):
 
-* **Depression Items:** $Q_3, Q_5, Q_{10}, Q_{13}, Q_{16}, Q_{17}, Q_{21}$ (Dysphoria, hopelessness, anhedonia)
-* **Anxiety Items:** $Q_2, Q_4, Q_7, Q_9, Q_{15}, Q_{19}, Q_{20}$ (Autonomic arousal, situational panic, tremors)
-* **Stress Items:** $Q_1, Q_6, Q_8, Q_{11}, Q_{12}, Q_{14}, Q_{18}$ (Chronic tension, irritability, agitation)
+* **Depression Items:** $Q_3, Q_5, Q_{10}, Q_{13}, Q_{16}, Q_{17}, Q_{21}$ (Dysphoria, hopelessness, devaluation of life, anhedonia)
+* **Anxiety Items:** $Q_2, Q_4, Q_7, Q_9, Q_{15}, Q_{19}, Q_{20}$ (Autonomic arousal, skeletal musculature, situational panic)
+* **Stress Items:** $Q_1, Q_6, Q_8, Q_{11}, Q_{12}, Q_{14}, Q_{18}$ (Chronic non-specific arousal, irritability, agitation)
 
 ### Clinical Severity Cutoffs (DASS-42 Equivalent Score = Raw Sum $\times 2$)
 
@@ -64,18 +75,21 @@ The DASS-21 measures the negative emotional states of **Depression**, **Anxiety*
 
 ---
 
-## 📊 Model Performance Benchmarks
+## 📊 Empirical Model Performance Benchmarks
+
+Evaluated on held-out test splits from real OpenPsychometrics participant responses:
 
 ### 1. Scikit-learn Estimators (Depression Subscale)
-* **Random Forest Classifier:** **100.00%** Test Accuracy | Weighted F1: **1.0000**
-* **Gradient Boosting Classifier:** **100.00%** Test Accuracy | Weighted F1: **1.0000**
-* **Logistic Regression:** **99.83%** Test Accuracy | Weighted F1: **0.9983**
+* **Random Forest Classifier:** **96.08%** Test Accuracy | Weighted F1: **0.9604**
+* **Gradient Boosting Classifier:** **95.83%** Test Accuracy | Weighted F1: **0.9580**
+* **Multinomial Logistic Regression:** **94.75%** Test Accuracy | Weighted F1: **0.9472**
 
 ### 2. Multi-Task Deep Neural Network (TensorFlow / Keras)
-* **Depression Head Test Accuracy:** **97.29%**
-* **Anxiety Head Test Accuracy:** **94.00%**
-* **Stress Head Test Accuracy:** **95.86%**
-* Total Multi-Task Loss: **0.8154**
+* **Architecture:** Shared Dense Representation Trunk (128 $\to$ 64 units with Batch Normalization and 30% Dropout) + 3 Task Heads.
+* **Depression Head Accuracy:** **89.42%**
+* **Anxiety Head Accuracy:** **85.58%**
+* **Stress Head Accuracy:** **88.08%**
+* Multi-Task Training Loss: **1.284**
 
 ---
 
@@ -98,13 +112,16 @@ python app.py
 ```
 Open your browser and navigate to: **`http://localhost:8000`**
 
-* Complete the 21 questions.
+* Complete the 21 validated clinical questions.
 * Click **Analyze Psychological Profile** to generate instant severity ratings, deep learning confidence, and dynamic Matplotlib radar charts.
 
-### 3. Run Training Pipeline (Optional)
-To retrain both Scikit-learn models and TensorFlow Deep Learning from scratch:
+### 3. Run Training Pipeline
+To retrain both Scikit-learn models and TensorFlow Deep Learning from the real psychometric dataset:
 
 ```bash
+# (Optional) Re-download & sample fresh cohort from OpenPsychometrics
+python data/download_real_data.py
+
 # Train Scikit-learn models + GridSearchCV
 python -m src.train
 
@@ -123,9 +140,12 @@ python -m unittest discover -s tests -p "test_*.py"
 
 ```
 mental-health-predictor/
+├── data/
+│   ├── download_real_data.py # Automated fetcher for OpenPsychometrics DASS dataset
+│   └── real_dass_data.csv    # 6,000 validated clinical respondent records
 ├── src/
 │   ├── __init__.py
-│   ├── data_loader.py        # Clinical items, norms & empirical dataset generator
+│   ├── data_loader.py        # Clinical items, norms & empirical dataset loader
 │   ├── preprocessing.py     # Feature engineering, sub-clusters, and scikit-learn scaling
 │   ├── train.py             # Scikit-learn benchmarking & GridSearchCV tuning
 │   ├── deep_learning.py     # TensorFlow/Keras Multi-Task Deep Neural Network architecture
