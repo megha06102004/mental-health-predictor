@@ -15,7 +15,7 @@ Trained on authentic human psychometric research data from the **OpenPsychometri
 
 ## 📊 Real-World Psychometric Dataset (OpenPsychometrics)
 
-Unlike toy synthetic demonstrations, this system is trained on **authentic human survey data**:
+The system is trained and benchmarked on **authentic human survey data**:
 * **Source Archive:** [OpenPsychometrics Research Dataset](https://openpsychometrics.org/_rawdata/)
 * **Raw Population Size:** 39,775 participants across international cohorts.
 * **Data Quality Filtering:** Filtered for validity by response completion latency ($VCL \ge 10\text{s}$) to eliminate rapid random clicks and incomplete records.
